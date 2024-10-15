@@ -133,16 +133,6 @@ summary_table_trbv <- trbv_data %>%
     Mean_Diff = Peptide_Mean - Resting_Mean
   )
 
-summary_table_trdv <- trdv_data %>%
-  rowwise() %>%
-  mutate(
-    Resting_Mean = mean(c(X1_Resting, X2_Resting, X3_Resting)),
-    Resting_SD = sd(c(X1_Resting, X2_Resting, X3_Resting)),
-    Peptide_Mean = mean(c(X1_Peptide, X2_Peptide, X3_Peptide)),
-    Peptide_SD = sd(c(X1_Peptide, X2_Peptide, X3_Peptide)),
-    Mean_Diff = Peptide_Mean - Resting_Mean
-  )
-
 # Select the top 10 (8 for delta) rows based on the absolute value of Mean_Diff
 top_10_table_trav <- summary_table_trav %>%
   arrange(desc(abs(Mean_Diff))) %>%
@@ -219,21 +209,6 @@ ggplot(plot_data_trbv, aes(x = allVHitsWithScore, y = cloneFraction, fill = Grou
     legend.title = element_blank()
   )
 
-ggplot(plot_data_trdv, aes(x = allVHitsWithScore, y = cloneFraction, fill = Group)) +
-  geom_boxplot(position = position_dodge(width = 0.75), width = 0.5) +
-  stat_boxplot(geom = "errorbar", position = position_dodge(width = 0.75), width = 0.2) +
-  labs(x = " ", y = "Clonal Fraction", fill = "Group") +
-  scale_y_log10(labels = scales::scientific) +
-  scale_fill_manual(values = c("azure3", "deepskyblue1"), labels = c("CTL", "P3")) +
-  theme_minimal() +
-  theme(
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.border = element_blank(),
-    axis.line = element_line(colour = "black"),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.title = element_blank()
-  )
 
 # Statistices
 # Reshape the data from wide to long format
@@ -244,12 +219,6 @@ trav_data_long <- trav_data %>%
                values_to = "Value")
 
 trbv_data_long <- trbv_data %>%
-  pivot_longer(cols = starts_with(c("X1", "X2", "X3")),
-               names_to = c("Sample", "Condition"),
-               names_sep = "_",
-               values_to = "Value")
-
-trdv_data_long <- trdv_data %>%
   pivot_longer(cols = starts_with(c("X1", "X2", "X3")),
                names_to = c("Sample", "Condition"),
                names_sep = "_",
